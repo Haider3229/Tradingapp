@@ -1,0 +1,112 @@
+import sys
+import threading
+import time
+import requests
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.clock import Clock
+
+# ==========================================
+# MASTER STABLE FACTORY CONFIGURATION
+# ==========================================
+BOT_TOKEN = '8925417198:AAGYFcseuauS4Lufag-M8hHe3RH_NhdeJDA'
+CHAT_ID = '7692079652'
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1511538097207246848/Nl5gQRpdd-iKiJCq0Ij9_CQ_0Wqs-rzJsk-pn8t7pQenWgHwr0Zk7HcwDoFEhXWuIlCX"
+
+BINANCE_LIVE_URL = 'https://api.binance.com'
+FOREX_LIVE_URL = 'https://api.exchangerate-api.com/v4/latest/USD'
+
+# 12 Best & Most Stable Crypto Coins Selected by AI
+CRYPTO_COINS = [
+    'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'SUIUSDT', 'DOGEUSDT', 
+    'XRPUSDT', 'LTCUSDT', 'BNBUSDT', 'ADAUSDT', 'DOTUSDT', 
+    'LINKUSDT', 'AVAXUSDT'
+]
+# Top Forex & Metals
+FOREX_PAIRS = ['XAU', 'XAG', 'EUR']
+
+class UltimateTradingApp(App):
+    def build(self):
+        self.title = 'AI Selected Dual Trader'
+        self.last_crypto_prices = {}
+        self.bot_status = "AI Master Engine Connected ??"
+        
+        layout = BoxLayout(orientation='vertical', padding=20, spacing=15)
+        
+        self.title_label = Label(text="?? AI STABLE PRO APP", font_size='22sp', bold=True, size_hint_y=None, height=50)
+        layout.add(self.title_label)
+        
+        self.status_label = Label(text=f"Connection: {self.bot_status}", font_size='16sp', color=[0, 1, 0, 1])
+        layout.add(self.status_label)
+        
+        # Automatic live log update window
+        self.log_label = Label(text="Booting 12 Stable Cryptos...\nConnecting Exness/Binance Feeds...", font_size='12sp', halign='center')
+        layout.add(self.log_label)
+        
+        exit_btn = Button(text="Shutdown Factory", size_hint_y=None, height=50, background_color=[1, 0, 0, 1])
+        exit_btn.bind(on_press=self.stop_engine)
+        layout.add(exit_btn)
+        
+        t = threading.Thread(target=self.auto_stream_engine)
+        t.daemon = True
+        t.start()
+        
+        return layout
+
+    def send_instant_alert(self, msg):
+        try: requests.post(DISCORD_WEBHOOK_URL, json={"content": msg}, timeout=5)
+        except: pass
+        try: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg}, timeout=5)
+        except: pass
+
+    def refresh_screen_data(self, text):
+        Clock.schedule_once(lambda dt: setattr(self.log_label, 'text', text))
+
+    def auto_stream_engine(self):
+        self.send_instant_alert("?? Factory Launched: 12 Stable Cryptos + Gold/Silver Active Monitoring!")
+        while True:
+            screen_output = "?? [12 STABLE CRYPTO STREAM]\n"
+            try:
+                # 1. Automatic Crypto Stream Loop
+                for coin in CRYPTO_COINS:
+                    try:
+                        res = requests.get(f"{BINANCE_LIVE_URL}/api/v3/ticker/price?symbol={coin}", timeout=5).json()
+                        current_price = float(res['price'])
+                        prev_price = self.last_crypto_prices.get(coin, current_price)
+                        
+                        # High Accuracy 0.5% Strong Dip Filter
+                        if current_price <= prev_price * 0.995: 
+                            self.send_instant_alert(f"?? [?? SIGNAL ALERT] {coin.replace('USDT','')} Strong Support Dip @ ${current_price}")
+                        
+                        self.last_crypto_prices[coin] = current_price
+                        screen_output += f"{coin.replace('USDT','')}: ${current_price} | "
+                    except: continue
+
+                # 2. Automatic Forex Stream Loop
+                try:
+                    forex_data = requests.get(FOREX_LIVE_URL, timeout=5).json().get('rates', {})
+                    screen_output += "\n\n?? [FOREX LIVE RATES]\n"
+                    for pair in FOREX_PAIRS:
+                        rate = forex_data.get(pair, 0)
+                        if rate == 0: continue
+                        
+                        if pair == 'XAU': name = "?? GOLD (XAU)"
+                        elif pair == 'XAG': name = "?? SILVER (XAG)"
+                        elif pair == 'EUR': name = "???? EURUSD"
+                        
+                        screen_output += f"{name}: {rate}  "
+                except: pass
+
+                self.refresh_screen_data(screen_output)
+                time.sleep(5) # Auto refresh every 5 seconds
+            except Exception:
+                time.sleep(10)
+
+    def stop_engine(self, instance):
+        self.send_instant_alert("?? Pro Factory Closed by User.")
+        sys.exit()
+
+if __name__ == '__main__':
+    UltimateTradingApp().run()
