@@ -30,13 +30,10 @@ jobs:
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
         
-        # Buildozer ko bina pooche automatic sare android licenses accept karne par majboor karne ke liye:
+        # Automatic license approval
         export APP_ANDROID_ACCEPT_SDK_LICENSE="1"
         
-        # Pehle step mein licenses aur tools set ho jayenge
-        yes | buildozer android debug || true
-        
-        # Doosre run mein actual APK compile ho kar nikal aayegi
+        # Clean build command without pipes
         buildozer android debug
         
     - name: Upload APK Artifact
