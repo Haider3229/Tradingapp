@@ -6,16 +6,16 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# Only include core packages that have fully supported recipes
+# Android par chalne wali 100% stable core requirements
 requirements = python3, kivy, requests, certifi, charset-normalizer, idna, urllib3
 
 orientation = portrait
 fullscreen = 0
 
-# Permissions
+# Internet permission for live tracking data
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE
 
-# Stable SDK and NDK Settings
+# Locked stable SDK and NDK versions
 android.api = 33
 android.minapi = 21
 android.ndk = 25b
