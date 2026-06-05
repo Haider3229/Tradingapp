@@ -6,22 +6,19 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# (list) Application requirements (Ismein trading bot ki saari sahi libraries add hain)
-requirements = python3, kivy, requests, uritemplate, pyasn1, pycparser, cryptography, pyopenssl, certifi, idna, charset-normalizer, ccxt
+# Only include core packages that have fully supported recipes
+requirements = python3, kivy, requests, certifi, charset-normalizer, idna, urllib3
 
 orientation = portrait
 fullscreen = 0
 
-# (list) Permissions (Internet enabled for trading bot)
+# Permissions
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE
 
-# (int) Target Android API
-android.api = 31
-
-# (int) Minimum API
+# Stable SDK and NDK Settings
+android.api = 33
 android.minapi = 21
-
-# (int) Android NDK API to use
+android.ndk = 25b
 android.ndk_api = 21
 
 [buildozer]
